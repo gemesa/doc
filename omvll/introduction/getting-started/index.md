@@ -549,6 +549,32 @@ OMVLL_PYTHONPATH: "/Users/romain/Downloads/Python-3.10.8/Lib"
 OMVLL_CONFIG:     "/Users/romain/dev/ios-app/demo/omvll_conf/base.py"
 ```
 
+### Swift Package Manager
+
+Swift Package Manager (SPM) is another way to import code into your project.
+
+Our recommendation is to apply O-MVLL only to the main project. However, in some cases you may also want to obfuscate code coming from SPM dependencies. To do so, modify your Package.swift and add the following settings to the relevant targets:
+
+
+```swift
+.targets: [
+    .target(
+        name: "YourTarget",
+        dependencies: [],
+        swiftSettings: [
+            .unsafeFlags([
+                "-load-pass-plugin=\(pluginPath)"
+            ])
+        ],
+        cSettings: [
+            .unsafeFlags([
+                "-fpass-plugin=\(pluginPath)"
+            ])
+        ]
+    )
+]
+```
+
 ## Code Completion
 
 The PyPI package [`omvll`](https://pypi.org/project/omvll/1.0.0/) can be used to get code completion
