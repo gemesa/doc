@@ -15,8 +15,9 @@ Welcome to the O-MVLL documentation. This documentation is split into three sect
 3. The last section, [other topics]({{< ref "/omvll/other-topics" >}}), contains different information
    for those who are already familiar with the project.
 
-O-MVLL is an obfuscator based on LLVM that uses the new LLVM pass manager, `-fpass-plugin` to perform
-native code obfuscation. These obfuscation rules are driven by a Python API defined as follows:
+O-MVLL is an LLVM-based obfuscator that leverages the new LLVM pass manager. It integrates via 
+`-fpass-plugin` in Clang or `-load-pass-plugin` option in the Swift compiler (starting with Xcode 26)
+to perform native code obfuscation. The obfuscation rules are driven by a Python API defined as follows:
 
 {{< alert type="danger" icon="fa-light fa-microchip">}}
 O-MVLL currently supports **AArch64** and **AArch32** architectures.
@@ -37,5 +38,8 @@ class MyConfig(omvll.ObfuscationConfig):
         if string.startswith(b"/home") and string.endswith(b".cpp"):
           return "REDACTED"
 ```
+
+Throughout this documentation, we use Clang to refer to the host compiler, which can be either
+Clang or the Swift compiler.
 
 {{< svg "/assets/omvll/omvll-pipeline.svg" >}}

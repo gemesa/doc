@@ -8,15 +8,18 @@ weight      = 10
 
 O-MVLL is a code obfuscator based on LLVM and designed to work with Android and iOS toolchains.
 It supports AArch64 and AArch32 as target architectures. Theoretically, it could be run as
-simply as using the compiler flag `-fpass-plugin=`, as follows:
+simply as using the Clang compiler flag `-fpass-plugin=` (`-load-pass-plugin=` in Swift) as follows:
 
 ```cpp
 # Create/edit './omvll_config.py' to configure the obfuscator and run:
+# For C/C++/Objective-C projects:
 $ clang -fpass-plugin=OMVLL.{so, dylib} main.c -o main
+
+# For Swift projects:
+$ swiftc -load-pass-plugin=OMVLL.dylib main.swift -o main
 ```
 
 **Practically, there are additional configuration steps.**
-
 
 ### O-MVLL Configuration File
 
@@ -522,13 +525,20 @@ Finally:
 
 ## iOS
 
-Using O-MVLL with Xcode is a bit easier than Android since we don't need to deal with different `libstdc++/libc++`.
-To enable O-MVLL, one needs to set the following in Xcode:
+Using O-MVLL with Xcode is a bit easier than Android since we don't need to deal
+with different `libstdc++/libc++`. When targeting C/C++/Objective-C projects, O-MVLL
+can be invoked by adding `-fpass-plugin=/path/to/omvll.dylib` under the following
+Xcode setting:
 
 `Build Settings > Apple Clang - Custom Compiler Flags > Other C/C++ Flags`
 
-and add `-fpass-plugin=<path>/omvll_xcode_15_2.dylib`. For versions targeting Xcode 14.5 and lower, the legacy pass manager
+For versions targeting Xcode 14.5 and lower, the legacy pass manager
 needs to be disabled as well via `-fno-legacy-pass-manager`.
+
+Likewise, when targeting Swift projects, O-MVLL can be enabled by specifying
+`-load-pass-plugin=/path/to/omvll.dylib` under the setting:
+
+`Build Settings > Swift Compiler - Custom Flags > Other Swift Flags`
 
 Finally, we can create an `omvll.yml` file next to the `*.xcodeproj` file which defines `OMVLL_PYTHONPATH` and `OMVLL_CONFIG`.
 
