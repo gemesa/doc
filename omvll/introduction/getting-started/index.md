@@ -234,6 +234,46 @@ OMVLL_PYTHONPATH: "<mirror of $OMVLL_PYTHONPATH>"
 OMVLL_CONFIG:     "<mirror of $OMVLL_CONFIG>"
 ```
 
+## Logging
+
+During compilation, O-MVLL produces log files to help you inspect what was configured and which passes were applied.
+By default, these logs are written into a folder named `omvll-logs` where your compiler has been invoked.
+
+If `output_folder` is set, the logs folder is created at:
+
+```bash
+<output_folder>/omvll-logs
+```
+
+Inside `omvll-logs`, you will find:
+
+**omvll-init.log**
+Contains the full initialization and setup logs for the tool. This is the first place to look if you want to verify configuration, or general startup behavior.
+
+**omvll-module-logs/<architecture>/<moduleName>.log**
+A per-module log with detailed information about the obfuscation pipeline. These files describe which passes were applied to each module and include more granular pass-level output.
+
+{{< alert type="dark" icon="fa-regular fa-face-thinking" >}}
+Log files are generated per module, not per compilation unit.
+{{</ alert >}}
+In Swift, the compiler commonly groups multiple `.swift` source files into fewer
+frontend invocations, so you will usually see fewer log files than source files.
+Depending on the compilation mode:
+1. Whole Module Optimization (WMO): Swift compiles the entire module in a single
+invocation. In this case, O-MVLL typically produces one log per module (and
+architecture).
+2. Incremental compilation: Swift compiles several files together per invocation.
+With `SWIFT_ENABLE_BATCH_MODE=YES` (enabled by default with incremental mode),
+each frontend invocation compiles a batch of source files instead of just one.
+O-MVLL therefore generates one log per batch, not per individual `.swift` file.
+
+If you need one log per Swift source file (for troubleshooting or deeper per-file inspection), disable Batch Mode in Xcode by adding a User-Defined Build Setting:
+
+```bash
+SWIFT_ENABLE_BATCH_MODE = NO
+```
+This forces Xcode/Swift to compile each file separately, and O-MVLL will emit a corresponding log per source file.
+
 ## Android NDK (Linux and MacOS)
 
 The toolchain provided by the Android NDK is based on LLVM and **linked with `libc++`**.
